@@ -5,6 +5,4 @@ torch==2.0.1
 transformers @ git+https://github.com/huggingface/transformers
 librosa==0.10.1
 numpy==1.21.2
-crewai
-langchain-groq
-latest-ai-development
+gunicorn==20.1.0

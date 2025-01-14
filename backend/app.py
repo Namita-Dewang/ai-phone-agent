@@ -4,11 +4,10 @@ import os
 from dotenv import load_dotenv
 import logging
 from smallest import Smallest
+from openai import OpenAI
 import time
 import torch
 from faster_whisper import WhisperModel
-# Import the process_customer_message function from CrewAgent
-from latest_ai_development.main import process_customer_message
 
 # Load environment variables
 load_dotenv()
@@ -19,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 CORS(app)
-UPLOAD_FOLDER = 'audio_files'
+UPLOAD_FOLDER = 'audio_files'  # Create this directory
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Ensure upload directory exists
@@ -29,9 +28,12 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 smallest_api_key = os.getenv("SMALLEST_API_KEY")
 smallest_client = Smallest(api_key=smallest_api_key)
 
+deepseek_api_key = os.getenv("DEEPSEEK_API_KEY")
+deepseek_client = OpenAI(api_key=deepseek_api_key, base_url="https://api.deepseek.com")
+
 # Initialize Whisper model
-whisper_model = WhisperModel("small", device="cuda" if torch.cuda.is_available() else "cpu")
-logger.info(f"Whisper model loaded on: {'cuda' if torch.cuda.is_available() else 'cpu'}")
+whisper_model = WhisperModel("small", device="cpu" )
+logger.info(f"Whisper model loaded on: cpu")
 
 def transcribe_audio(audio_file):
     """Transcribe audio using Faster Whisper"""
@@ -58,19 +60,6 @@ def transcribe_audio(audio_file):
             "error": str(e)
         }
 
-def process_with_crew(transcription):
-    """Process transcription with CrewAgent's main.py and get response"""
-    try:
-        # Join the transcription segments into a single string
-        transcription_text = " ".join(transcription)
-        
-        # Use CrewAgent's main.py to process the message
-        response = process_customer_message(transcription_text)
-        return response
-    except Exception as e:
-        logger.error(f"CrewAgent error: {e}")
-        return "Error processing your request"
-
 @app.route('/transcribe', methods=['POST'])
 def transcribe():
     try:
@@ -79,24 +68,23 @@ def transcribe():
             
         audio_file = request.files['audio']
         
-        # Get transcription from Whisper
+        # Get transcription
         result = transcribe_audio(audio_file)
         
         if result["success"]:
-            # Process with CrewAgent through main.py
-            crew_response = process_with_crew(result["transcription"])
+            deepseek_response = send_to_deepseek(result["transcription"])
             
-            # Generate audio response using Smallest
+            # Generate audio response
             filename = f"response_{int(time.time())}.wav"
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             
             # Synthesize audio and save it
-            smallest_client.synthesize(crew_response, save_as=file_path)
+            smallest_client.synthesize(deepseek_response, save_as=file_path)
             
             return jsonify({
                 "success": True,
                 "transcription": result["transcription"],
-                "crew_response": crew_response,
+                "deepseek_response": deepseek_response,
                 "audio_url": f"/audio/{filename}"
             })
         else:
@@ -105,6 +93,24 @@ def transcribe():
     except Exception as e:
         logger.error(f"Request error: {e}")
         return jsonify({"error": str(e)}), 500
+
+def send_to_deepseek(transcription):
+    """Send transcription to DeepSeek and get response"""
+    try:
+        # Join the transcription segments into a single string
+        transcription_text = " ".join(transcription)
+        response = deepseek_client.chat.completions.create(
+            model="deepseek-chat",
+            messages=[
+                {"role": "system", "content": "You are a helpful assistant"},
+                {"role": "user", "content": transcription_text},
+            ],
+            stream=False
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        logger.error(f"DeepSeek API error: {e}")
+        return "Error communicating with DeepSeek"
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload():
@@ -141,4 +147,5 @@ def serve_audio(filename):
         return jsonify({"error": str(e)}), 500
 
 if __name__ == "__main__":
-    app.run(debug=False, host='0.0.0.0', port=5000)
+    port = int(os.getenv("PORT", 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
