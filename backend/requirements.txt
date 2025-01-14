@@ -1,0 +1,10 @@
+flask==2.0.1
+flask-cors==3.0.10
+python-dotenv==1.0.0
+torch==2.0.1
+transformers @ git+https://github.com/huggingface/transformers
+librosa==0.10.1
+numpy==1.21.2
+crewai
+langchain-groq
+latest-ai-development
