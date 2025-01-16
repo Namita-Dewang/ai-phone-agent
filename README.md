@@ -1,59 +1,93 @@
-# ai-phone-agent
+# 🌟 AI Phone Agent
 
-## 🚀 Overview
-This project is a full-stack application featuring a **React-based frontend** and a **Python-powered backend**. It is designed to handle **audio processing**, **language processing**, and deliver an engaging user experience. The backend integrates advanced capabilities for tasks like synthesizing audio and handling AI-powered operations.
+This project is an **AI-powered phone agent** that facilitates interactive conversations using synthesized audio and a web-based user interface. It comprises a backend powered by Python and a frontend built using React.
 
 ---
 
-## 🏗️ Project Structure
+## ✨ Features
+- 🎙️ **Audio Interaction**: Record and play audio directly in the browser.
+- 🤖 **AI-Powered Responses**: Generate synthesized audio for dynamic conversation.
+- 🖥️ **Web Interface**: Interactive React-based UI for seamless user experience.
+
+---
+
+## 📁 Folder Structure
+```
+ai-phone-agent-main
+├── backend
+│   ├── app.py                # Backend logic and API endpoints
+│   ├── requirements.txt      # Python dependencies
+│   └── synthesized_audio.wav # Sample audio output
+├── frontend
+│   ├── package.json          # Frontend dependencies
+│   ├── public
+│   │   └── index.html        # HTML template
+│   └── src
+│       ├── App.js            # Main React component
+│       ├── index.js          # Entry point for React
+│       └── components        # React components
+│           ├── AudioRecorder.js
+│           ├── CallAgent.js
+│           └── Conversation.js
+```
+
+---
+
+## 🛠️ Prerequisites
+- **Backend**: Python 3.10+ installed.
+- **Frontend**: Node.js (LTS version) installed.
+
+---
+
+## 🚀 Setup and Installation
 
 ### Backend
-- **Main Application**: `app.py` serves as the entry point for backend services.
-- **Key Modules**:
-  - `crew_integration.py`: Manages specific integrations.
-  - `langchain_agent.py`: Implements language processing and AI-based interactions.
-  - `test.py`: Provides backend test cases.
-- **Audio Handling**:
-  - `synthesized_audio.wav`: Example audio output.
-  - `audio_files`: Directory for storing uploaded audio files.
-  - `temp_audio`: Temporary storage during processing.
-- **Dependencies**: Managed via `requirements.txt`.
-
-### Frontend
-- **Core Files**:
-  - `package.json` and `package-lock.json`: Manage dependencies and scripts.
-- **Directories**:
-  - `public`: Static assets and public-facing files.
-  - `src`: Contains React components and business logic.
-  - `node_modules`: Auto-generated directory with installed Node.js modules.
-
----
-
-## 🔧 Features
-- **Audio Processing**:
-  - Process and synthesize audio files.
-  - Temporary storage and seamless handling of audio operations.
-- **AI-Powered Language Processing**:
-  - Powered by modern AI libraries.
-  - Supports advanced language models.
-- **Full-Stack Architecture**:
-  - React frontend for seamless user experience.
-  - Python backend with efficient APIs.
-
----
-
-## 🚀 Getting Started
-
-### Prerequisites
-1. **Backend**:
-   - Python 3.8 or higher
-   - Install dependencies: `pip install -r requirements.txt`
-2. **Frontend**:
-   - Node.js 16.x or higher
-
-### Setup Instructions
-
-#### Backend
-1. Navigate to the `backend` directory:
+1. Navigate to the `backend` folder:
    ```bash
    cd backend
+   ```
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+3. Run the backend server:
+   ```bash
+   python app.py
+   ```
+
+### Frontend
+1. Navigate to the `frontend` folder:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm start
+   ```
+
+---
+
+## 🧑‍💻 Usage
+1. Start the backend and frontend servers.
+2. Access the application in your browser at `http://localhost:3000`.
+3. Use the web interface to record audio, interact with the AI agent, and view conversation details.
+
+---
+
+## 💻 Technologies Used
+- **Backend**: Python (Flask or similar framework assumed)
+- **Frontend**: React.js
+- **Audio Processing**: Custom Python scripts and web APIs
+
+---
+
+### 📌 Note
+Ensure all dependencies are installed and environment variables are correctly configured before running the application.
+
+---
+
+💡 Happy Coding!
